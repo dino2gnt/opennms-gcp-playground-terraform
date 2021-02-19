@@ -32,7 +32,7 @@ Optional variables:
 * If you use a private github repo for the Ansible config, you can uncomment the various bits to pass in a path to your deployment private key as `deploy_key_priv` .
 * anything else can be overridden on the command line or in a `tfvars` as you see fit.
 
-The included compute instance [startup scripts](https://github.com/dino2gnt/opennms-gcp-playground-terraform/tree/main/bootstrap) files point to [another repo](https://github.com/dino2gnt/opennms-gcp-playground-ansible.git) the contains sufficient Ansible to install and configure most of the nuts and bolts of the environment. If you're going to use this, you should probably fork that repo and update your startup scripts to pull from it instead of mine. 
+The included compute instance [startup scripts](https://github.com/dino2gnt/opennms-gcp-playground-terraform/tree/main/bootstraps) files point to [another repo](https://github.com/dino2gnt/opennms-gcp-playground-ansible.git) the contains sufficient Ansible to install and configure most of the nuts and bolts of the environment. If you're going to use this, you should probably fork that repo and update your startup scripts to pull from it instead of mine. 
 You will need to manually enable the OpenNMS Helm plugin in Grafana and configuring the various datasources, but flow data should be available almost immediately.
 
 The tinyvpn instance was intended to be used as an OpenVPN gateway, however, this work is still to be done.
