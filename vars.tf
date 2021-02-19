@@ -57,7 +57,7 @@ variable "disks" {
     },
     opennms = {
         name = "opennms-disk",
-        size = "100" 
+        size = "10" 
     },
     elasticsearch = {
         name = "es-disk",

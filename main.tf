@@ -77,7 +77,7 @@ resource "google_compute_disk" "default" {
   for_each = var.disks
   project = var.project
   name  = each.value.name
-  type  = "pd-ssd"
+  type  = "pd-standard"
   zone  = var.zone
   size  = each.value.size
   }
