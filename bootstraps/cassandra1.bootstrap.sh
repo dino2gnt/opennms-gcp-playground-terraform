@@ -3,7 +3,7 @@ ZONE="us-central1-c"  #i hate that the zone is hardcoded, but I'm too lazy to fi
 CONFIG_REPO="https://github.com/dino2gnt/opennms-gcp-playground-ansible.git" #this Ansible repo holds all the configuration roles.
 
 yum -y install epel-release
-yum -y install vim net-tools atop tmux gpm tar ansible git
+yum -y install vim net-tools atop tmux gpm tar ansible git lvm2
 yum -y update
 gcloud compute instances describe $(hostname) --flatten="metadata[vpw]" --zone=$ZONE --quiet | tail -n1 | sed 's/\ //g' > /etc/ansible/.vpw
 chmod 0600 ~/.deploy

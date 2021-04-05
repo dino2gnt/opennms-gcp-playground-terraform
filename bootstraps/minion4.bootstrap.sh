@@ -6,6 +6,7 @@ yum -y install epel-release
 yum -y install vim net-tools atop tmux gpm tar ansible git
 yum -y update
 gcloud compute instances describe $(hostname) --flatten="metadata[vpw]" --zone=$ZONE --quiet | tail -n1 | sed 's/\ //g' > /etc/ansible/.vpw
+gcloud compute instances describe $(hostname) --flatten="metadata[minion_location]" --zone=$ZONE --quiet | tail -n1 | sed 's/\ //g' > /tmp/metadata_minion_location
 chmod 0600 ~/.deploy
 sdb=$(mount | grep -c sdb);
 if [ $sdb -eq 0 ]; then
