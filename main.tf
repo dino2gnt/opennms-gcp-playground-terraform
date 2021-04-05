@@ -55,7 +55,7 @@ resource "google_compute_firewall" "internal" {
 
   allow {
     protocol = "tcp"
-    ports    = ["9092", "9200", "9999", "8080", "80", "443", "25"]
+    ports    = ["9042", "9092", "9200", "9999", "8080", "80", "443", "25"]
   }
   allow {
     protocol = "udp"
@@ -107,8 +107,14 @@ resource "google_compute_instance" "default" {
     subnetwork = google_compute_subnetwork.playground-subnet.id
     network_ip = each.value.ipaddr
 
-    access_config {
+  //  access_config {
       // Ephemeral IP
+   // }
+    dynamic "access_config" {
+    for_each = each.value.name == "gateway" ? ["1"] : []
+    content {
+      nat_ip = null
+      }
     }
   }
 
@@ -145,7 +151,7 @@ resource "google_project_iam_member" "iam_things" {
 output "ip" {
   value = {
      for i in google_compute_instance.default:
-              i.name => i.network_interface.0.access_config.0.nat_ip
+              i.name => i.network_interface.0.access_config.0.nat_ip if length(i.network_interface.0.access_config) != 0
   }
   description = "nat_ip"
  }
