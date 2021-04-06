@@ -44,7 +44,6 @@ variable "ssh_user" {
 
 variable "vpw" {
   type = string
-  default = ""
 }
 
 variable "disks" {
@@ -53,7 +52,7 @@ variable "disks" {
   default     = {
     kafka = {
         name = "kafka-disk",
-        size = "100" 
+        size = "50" 
     },
     opennms = {
         name = "opennms-disk",
@@ -61,6 +60,10 @@ variable "disks" {
     },
     elasticsearch = {
         name = "es-disk",
+        size = "100" 
+    },
+    cassandra = {
+        name = "cs-disk",
         size = "100" 
     },
     grafana = {
@@ -71,8 +74,20 @@ variable "disks" {
         name = "tinyvpn-disk",
         size = "10" 
     },
-    minion = {
-        name = "minion-disk",
+    minion1 = {
+        name = "minion1-disk",
+        size = "10" 
+    },
+    minion2 = {
+        name = "minion2-disk",
+        size = "10" 
+    },
+    minion3 = {
+        name = "minion3-disk",
+        size = "10" 
+    },
+    minion4 = {
+        name = "minion4-disk",
         size = "10" 
     }
   }
@@ -114,13 +129,45 @@ variable "vms" {
       ipaddr = "192.168.100.40",
       sa = "grafana-compute-sa"
     },
-    minion = {
+    minion1 = {
       name = "minion1",
       machine_type = "n1-standard-1",
       hostname = "minion1.playground.foo",
       tags = ["minion","compute"],
       ipaddr = "192.168.100.50",
       sa = "minion-compute-sa"
+    },
+    minion2 = {
+      name = "minion2",
+      machine_type = "n1-standard-1",
+      hostname = "minion2.playground.foo",
+      tags = ["minion","compute"],
+      ipaddr = "192.168.100.51",
+      sa = "minion-compute-sa"
+    },
+    minion3 = {
+      name = "minion3",
+      machine_type = "n1-standard-1",
+      hostname = "minion3.playground.foo",
+      tags = ["minion","compute"],
+      ipaddr = "192.168.100.52",
+      sa = "minion-compute-sa"
+    },
+    minion4 = {
+      name = "minion4",
+      machine_type = "n1-standard-1",
+      hostname = "minion4.playground.foo",
+      tags = ["minion","compute"],
+      ipaddr = "192.168.100.53",
+      sa = "minion-compute-sa"
+    },
+    cassandra = {
+      name = "cassandra1",
+      machine_type = "n1-standard-1",
+      hostname = "cassandra1.playground.foo",
+      tags = ["elastic","compute"],
+      ipaddr = "192.168.100.100",
+      sa = "cassandra-compute-sa"
     },
     tinyvpn = {
       name = "gateway",
@@ -151,6 +198,9 @@ variable "compute_sa" {
     },
     minion = {
       account_id = "minion-compute-sa"
+    },
+    cassandra = {
+      account_id = "cassandra-compute-sa"
     },
     tinyvpn = {
       account_id = "tinyvpn-compute-sa"

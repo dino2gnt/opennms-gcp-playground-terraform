@@ -15,6 +15,27 @@ resource "google_compute_network" "playground-vpc" {
   auto_create_subnetworks = false
 }
 
+#cloud router for NAT
+resource "google_compute_router" "router" {
+  project = var.project
+  name    = "playground-router"
+  region  = google_compute_subnetwork.playground-subnet.region
+  network = google_compute_network.playground-vpc.id
+
+  bgp {
+    asn = 64514
+  }
+}
+
+resource "google_compute_router_nat" "nat" {
+  project                            = var.project
+  name                               = "playground-router-nat"
+  router                             = google_compute_router.router.name
+  region                             = google_compute_router.router.region
+  nat_ip_allocate_option             = "AUTO_ONLY"
+  source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+}
+
 #this creates the service accounts for each compute instance
 resource "google_service_account" "default" {
   for_each     = var.compute_sa
@@ -55,7 +76,7 @@ resource "google_compute_firewall" "internal" {
 
   allow {
     protocol = "tcp"
-    ports    = ["9092", "9200", "9999", "8080", "80", "443", "25"]
+    ports    = ["9042", "9092", "9200", "9999", "8080", "80", "443", "25"]
   }
   allow {
     protocol = "udp"
@@ -107,8 +128,11 @@ resource "google_compute_instance" "default" {
     subnetwork = google_compute_subnetwork.playground-subnet.id
     network_ip = each.value.ipaddr
 
-    access_config {
-      // Ephemeral IP
+    dynamic "access_config" {
+    for_each = each.value.name == "gateway" || each.value.name == "opennms" || each.value.name == "grafana" ? ["1"] : []
+    content {
+      nat_ip = null
+      }
     }
   }
 
@@ -117,6 +141,7 @@ resource "google_compute_instance" "default" {
     ssh-keys = "${var.ssh_user}:${file(var.pub_key_file)}"
 #    deploy-key = file(var.deploy_key_priv)
     vpw = var.vpw
+    minion_location = each.value.name
   }
 
   metadata_startup_script = file("bootstraps/${each.value.name}.bootstrap.sh")
@@ -145,7 +170,7 @@ resource "google_project_iam_member" "iam_things" {
 output "ip" {
   value = {
      for i in google_compute_instance.default:
-              i.name => i.network_interface.0.access_config.0.nat_ip
+              i.name => i.network_interface.0.access_config.0.nat_ip if length(i.network_interface.0.access_config) != 0
   }
   description = "nat_ip"
  }
